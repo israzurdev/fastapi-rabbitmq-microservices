@@ -3,45 +3,42 @@ from pydantic import BaseModel
 import pika
 import json
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
-load_dotenv()
+# Cargamos las variables de entorno
+load_dotenv(find_dotenv())
 
-app = FastAPI(title="Microservicio Pedidos")
-
-#Configuracion Rabbit / user, pass y host
+# Credenciales seguras (si no hay .env, usa "guest" por defecto para no exponer claves)
 RABBIT_USER = os.getenv("RABBIT_USER", "guest")
 RABBIT_PASS = os.getenv("RABBIT_PASS", "guest")
-RABBIT_HOST = os.getenv("RABBIT_HOST", "localhost")
+RABBIT_HOST = os.getenv("RABBIT_HOST", "rabbitmq")
 
-#Esquema de datos
+app = FastAPI(title="API de Pedidos")
 
 class Pedido(BaseModel):
     producto: str
     cantidad: int
     email_cliente: str
-    
+
 @app.post("/pedidos")
 async def crear_pedido(pedido: Pedido):
-    #Conectamos con el Broker RabbitMQ
+    # Conectamos con el Broker RabbitMQ
     credenciales = pika.PlainCredentials(RABBIT_USER, RABBIT_PASS)
     conexion = pika.BlockingConnection(pika.ConnectionParameters(host=RABBIT_HOST, credentials=credenciales))
     canal = conexion.channel()
-    
-    #Declaramos si existe o no la cola. Si no, la creamos (Idempotencia)
+
+    # Aseguramos que la cola existe
     canal.queue_declare(queue='cola_notificaciones')
-    #Conversión del objeto Pedido a JSON para que viaje por la red
+    
+    # Preparamos el mensaje
     mensaje = json.dumps(pedido.model_dump())
-    #Mensaje en cola
+    
+    # Publicamos el mensaje en la cola
     canal.basic_publish(
         exchange='',
         routing_key='cola_notificaciones',
         body=mensaje
     )
-    #Cerramos la conexion
+    
     conexion.close()
-    #Respuesta. Procesamiento en otro servicio de forma asíncrona
-    return {
-        "status": "ok",
-        "mensaje": "Pedido recibido. Encolado correctamente."
-    }
+    return {"status": "ok", "mensaje": "Pedido encolado correctamente y listo para procesar"}

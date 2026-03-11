@@ -1,3 +1,8 @@
-.env
+# Entornos virtuales
 venv/
+env/
 __pycache__/
+*.pyc
+
+# Archivos de configuración y secretos (¡NUNCA SUBIR!)
+.env
