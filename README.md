@@ -50,8 +50,5 @@ Esto empezó como un MVP, pero el proyecto está vivo y escalando:
 - [ ] **Fase 3:** Securizar el endpoint público con una API Key (mitigando riesgos OWASP A01).
 - [ ] **Fase 4:** Conectarle una base de datos real (SQLite/PostgreSQL) con SQLAlchemy para darle persistencia a los pedidos.
 
-## 🧠 Aprendizajes por el camino
-Pelearme con las redes internas de Docker, lidiar con los volúmenes persistentes y manejar la salida estándar de Python en contenedores para ver los logs en tiempo real han sido algunos de los mayores retos (¡y victorias!) de este proyecto.
-
 ---
 *Escrito a base de teclado y café por Israel - SysAdmin & Backend Developer.*
