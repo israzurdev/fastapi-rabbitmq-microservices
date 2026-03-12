@@ -1,5 +1,10 @@
 # 🚀 Arquitectura de Microservicios: FastAPI + RabbitMQ (EDA)
 
+
+![test](https://github.com/user-attachments/assets/6b86e198-cbb6-4f39-8c86-89ea7a771685)
+
+
+
 ¡Buenas! 👋 Bienvenido a este proyecto montado como prueba de concepto (PoC) para trastear con una **Arquitectura Orientada a Eventos (EDA)**. 
 
 Lo he desarrollado como un reto personal para profundizar en el mundo de los microservicios, la mensajería asíncrona y la orquestación de contenedores. Actualmente lo tengo corriendo de forma nativa en una Raspberry Pi en mi red local.
