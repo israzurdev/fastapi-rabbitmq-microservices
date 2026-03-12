@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv, find_dotenv
 
 #Cargamos las variables
-load_dotenv(find_dotenv())
+load_dotenv(find_dotenv()) 
 
 #Credenciales de RabbitMQ
 RABBIT_USER = os.getenv("RABBIT_USER", "guest")

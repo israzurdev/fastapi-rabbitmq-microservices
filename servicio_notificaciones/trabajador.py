@@ -52,4 +52,4 @@ def iniciar_trabajador():
     canal.start_consuming()
 
 if __name__ == "__main__":
-    iniciar_trabajador()
+    iniciar_trabajador() 
