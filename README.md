@@ -1,5 +1,7 @@
 # 🚀 Arquitectura de Microservicios: FastAPI + RabbitMQ (EDA)
 
+![test](https://github.com/user-attachments/assets/6b86e198-cbb6-4f39-8c86-89ea7a771685)
+
 ¡Buenas! 👋 Bienvenido a este proyecto montado como prueba de concepto (PoC) para trastear con una **Arquitectura Orientada a Eventos (EDA)**. 
 
 Lo he desarrollado como un reto personal para profundizar en el mundo de los microservicios, la mensajería asíncrona y la orquestación de contenedores. Actualmente lo tengo corriendo de forma nativa en una Raspberry Pi en mi red local.
@@ -17,6 +19,14 @@ He montado un sistema de **Productores y Consumidores** usando RabbitMQ como int
 3. **El Broker (RabbitMQ):** Es el guardián. Se guarda el evento a salvo. Si el resto del sistema se cae, el mensaje sigue ahí esperándonos. Cero pérdida de datos.
 4. **El Worker (Python - Consumidor):** Un trabajador incansable en segundo plano suscrito a la cola. Pilla el evento, hace el trabajo sucio simulado (un retardo artificial y mandar un email falso) y confirma a RabbitMQ que ha terminado para coger el siguiente.
 
+## 🔒 Seguridad: El Portero VIP (Mitigación OWASP A01)
+
+Dejar un endpoint de creación de pedidos abierto al mundo es comprar todas las papeletas para que un bot sature el servidor mediante un ataque DDoS de capa de aplicación (Broken Access Control). 
+
+Para solucionarlo, el endpoint público está protegido mediante una **API Key** usando las dependencias de seguridad nativas de FastAPI (`X-API-Key` en las cabeceras). 
+* ¿Tienes el pase VIP? Entras, la API te devuelve un `200 OK` y el worker procesa tu pedido. 
+* ¿No lo tienes o te lo inventas? Te llevas un bofetón en forma de `403 Forbidden` y el mensaje ni siquiera roza a RabbitMQ. ¡Cola limpia y servidor seguro!
+
 ## 🛠️ Stack Tecnológico
 
 * **Backend API:** Python 3, FastAPI, Pydantic, Uvicorn.
@@ -32,12 +42,12 @@ Si quieres trastear con él, es súper fácil. Solo necesitas tener Docker insta
     git clone https://github.com/israzurdev/fastapi-rabbitmq-microservices.git
     cd fastapi-rabbitmq-microservices
 
-2. Crea un archivo llamado `.env` en la raíz copiando la estructura de `.env.example` y pon tus propias contraseñas.
+2. Crea un archivo llamado `.env` en la raíz copiando la estructura de `.env.example`. Asegúrate de poner tus propias contraseñas y tu clave en `API_SECRET_KEY`.
 
 3. Levanta la orquesta ejecutando en la terminal: 
     docker-compose up --build -d
 
-4. Visita `http://localhost:8000/docs` para lanzar peticiones desde Swagger.
+4. Visita `http://localhost:8000/docs` para lanzar peticiones desde Swagger (¡Recuerda pulsar el botón 🔓 **Authorize** para introducir tu API Key antes de enviar un pedido!).
 
 5. Visita `http://localhost:15672` para ver el panel de control de RabbitMQ.
 
@@ -47,11 +57,8 @@ Esto empezó como un MVP, pero el proyecto está vivo y escalando:
 
 - [x] **Fase 1:** MVP funcionando. FastAPI hablando con RabbitMQ.
 - [x] **Fase 2:** Orquestar todo de golpe con un `docker-compose` y variables de entorno seguras.
-- [ ] **Fase 3:** Securizar el endpoint público con una API Key (mitigando riesgos OWASP A01).
+- [x] **Fase 3:** Securizar el endpoint público con una API Key (mitigando riesgos OWASP A01).
 - [ ] **Fase 4:** Conectarle una base de datos real (SQLite/PostgreSQL) con SQLAlchemy para darle persistencia a los pedidos.
-
-## 🧠 Aprendizajes por el camino
-Pelearme con las redes internas de Docker, lidiar con los volúmenes persistentes y manejar la salida estándar de Python en contenedores para ver los logs en tiempo real han sido algunos de los mayores retos (¡y victorias!) de este proyecto.
 
 ---
 *Escrito a base de teclado y café por Israel - SysAdmin & Backend Developer.*
